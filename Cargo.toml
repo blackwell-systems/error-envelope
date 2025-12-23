@@ -2,12 +2,16 @@
 name = "error-envelope"
 version = "0.1.0"
 edition = "2021"
-authors = ["Blackwell Systems"]
+authors = ["Blackwell Systems <noreply@blackwell.systems>"]
 license = "MIT"
-description = "A tiny, framework-agnostic error envelope for HTTP APIs"
-repository = "https://github.com/blackwell-systems/error-envelope-rust"
+description = "A tiny, framework-agnostic error envelope for HTTP APIs with Rust implementation of err-envelope"
+documentation = "https://docs.rs/error-envelope"
+repository = "https://github.com/blackwell-systems/error-envelope"
+homepage = "https://github.com/blackwell-systems/error-envelope"
+readme = "README.md"
 keywords = ["error", "http", "api", "envelope", "rest"]
 categories = ["web-programming", "api-bindings"]
+rust-version = "1.70"
 
 [dependencies]
 serde = { version = "1.0", features = ["derive"] }

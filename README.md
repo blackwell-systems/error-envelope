@@ -192,21 +192,6 @@ The builder pattern is **immutable by default** in Rust (unlike the Go version w
 | `DownstreamError` | 502 | Yes | Upstream service failed |
 | `DownstreamTimeout` | 504 | Yes | Upstream service timeout |
 
-## Differences from Go Version
-
-### Advantages in Rust
-
-- **Immutability by default**: No need for explicit copy-on-modify pattern
-- **Type-safe error codes**: `Code` enum prevents invalid codes at compile-time
-- **No nil pointers**: `Option<T>` makes optional fields explicit
-- **Framework traits**: Can implement `IntoResponse` for framework integration
-
-### Implementation Details
-
-- **Cause storage**: Stored as `String` (not `Box<dyn Error>`) to enable `Clone`
-- **Formatted constructors**: Use `format!()` macro instead of variadic functions
-- **Serialization**: Uses `serde` instead of encoding/json
-
 ## Framework Integration
 
 ### Axum (Optional Feature)
@@ -240,15 +225,16 @@ async fn handler() -> Result<String, Error> {
 ## Testing
 
 ```bash
-cargo test
+cargo test --all-features
 ```
 
-All tests pass with 12 test cases covering:
+All 17 tests pass (15 unit tests + 2 doc tests):
 - Constructors and builders
-- JSON serialization
+- JSON serialization  
 - Error trait implementation
 - Retry-after formatting
 - Immutability guarantees
+- Axum integration
 
 ## License
 
@@ -256,7 +242,7 @@ MIT
 
 ## Parity with Go Version
 
-This Rust implementation provides feature parity with [`err-envelope` v1.1.0 (Go)](https://github.com/blackwell-systems/err-envelope):
+This Rust implementation provides **feature parity** with [`err-envelope` v1.1.0 (Go)](https://github.com/blackwell-systems/err-envelope):
 
 ✅ Core error struct with all fields  
 ✅ Type-safe error codes enum  
@@ -265,8 +251,8 @@ This Rust implementation provides feature parity with [`err-envelope` v1.1.0 (Go
 ✅ Formatted constructors (using `format!`)  
 ✅ Custom JSON serialization for `retry_after`  
 ✅ std::error::Error trait implementation  
-✅ Comprehensive test suite  
-
-**Coming soon:**
-- HTTP middleware for trace injection
-- Additional framework integrations (actix-web, warp)
+✅ Axum `IntoResponse` integration  
+✅ `from()` for mapping arbitrary errors  
+✅ `validation()` with field-level errors  
+✅ `is()` for checking error codes  
+✅ Comprehensive test suite (15 tests passing)
