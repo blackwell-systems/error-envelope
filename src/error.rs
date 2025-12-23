@@ -49,6 +49,16 @@ impl Error {
     }
 
     /// Creates a new error with a formatted message.
+    /// 
+    /// This is a semantic alias for `new()` that signals the message
+    /// is typically constructed with `format!()`.
+    ///
+    /// # Example
+    /// ```
+    /// use error_envelope::{Error, Code};
+    /// let user_id = 123;
+    /// let err = Error::newf(Code::NotFound, 404, format!("user {} not found", user_id));
+    /// ```
     pub fn newf(code: Code, status: u16, message: impl Into<String>) -> Self {
         Self::new(code, status, message)
     }
@@ -133,7 +143,18 @@ impl Serialize for Error {
     {
         use serde::ser::SerializeStruct;
 
-        let field_count = 5 + if self.retry_after.is_some() { 1 } else { 0 };
+        // Count actual fields that will be serialized
+        let mut field_count = 3; // code, message, retryable (always present)
+        if self.details.is_some() {
+            field_count += 1;
+        }
+        if self.trace_id.is_some() {
+            field_count += 1;
+        }
+        if self.retry_after.is_some() {
+            field_count += 1;
+        }
+
         let mut state = serializer.serialize_struct("Error", field_count)?;
 
         state.serialize_field("code", &self.code)?;
