@@ -49,7 +49,7 @@ impl Error {
     }
 
     /// Creates a new error with a formatted message.
-    /// 
+    ///
     /// This is a semantic alias for `new()` that signals the message
     /// is typically constructed with `format!()`.
     ///
