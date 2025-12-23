@@ -64,12 +64,19 @@ For Axum integration:
 error-envelope = { version = "0.1", features = ["axum-support"] }
 ```
 
+For anyhow integration:
+```toml
+[dependencies]
+error-envelope = { version = "0.1", features = ["anyhow-support"] }
+```
+
 📖 **Full API documentation**: [docs.rs/error-envelope](https://docs.rs/error-envelope)
 
 ## Crate Features
 
 - **`default`**: Core error envelope with no framework dependencies
 - **`axum-support`**: Adds `IntoResponse` implementation for Axum framework integration
+- **`anyhow-support`**: Adds `From<anyhow::Error>` conversion for seamless interop with anyhow
 
 ## Quick Start
 
@@ -161,6 +168,36 @@ let err = err.with_retryable(true);
 
 // Set retry-after duration
 let err = err.with_retry_after(Duration::from_secs(60));
+```
+
+### Anyhow Integration
+
+With the `anyhow-support` feature, `anyhow::Error` automatically converts to `error_envelope::Error`:
+
+```rust
+use error_envelope::Error;
+
+async fn handler() -> Result<String, Error> {
+    // anyhow::Error converts automatically via ?
+    let result = do_work().await?;
+    Ok(result)
+}
+
+fn do_work() -> anyhow::Result<String> {
+    anyhow::bail!("something went wrong");
+}
+```
+
+This makes error-envelope a drop-in replacement for anyhow at HTTP boundaries:
+
+```rust
+use axum::{Json, Router, routing::get};
+use error_envelope::Error;
+
+async fn api_handler() -> Result<Json<Response>, Error> {
+    let data = fetch_data().await?; // anyhow error converts automatically
+    Ok(Json(Response { data }))
+}
 ```
 
 ### Builder Pattern
