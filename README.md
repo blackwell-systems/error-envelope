@@ -239,20 +239,3 @@ All 17 tests pass (15 unit tests + 2 doc tests):
 ## License
 
 MIT
-
-## Parity with Go Version
-
-This Rust implementation provides **feature parity** with [`err-envelope` v1.1.0 (Go)](https://github.com/blackwell-systems/err-envelope):
-
-✅ Core error struct with all fields  
-✅ Type-safe error codes enum  
-✅ Builder pattern (`with_*` methods)  
-✅ Helper constructors (internal, not_found, etc.)  
-✅ Formatted constructors (using `format!`)  
-✅ Custom JSON serialization for `retry_after`  
-✅ std::error::Error trait implementation  
-✅ Axum `IntoResponse` integration  
-✅ `from()` for mapping arbitrary errors  
-✅ `validation()` with field-level errors  
-✅ `is()` for checking error codes  
-✅ Comprehensive test suite (15 tests passing)
