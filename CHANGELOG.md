@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2025-12-23
+
+### Added
+- New `anyhow-support` feature for seamless anyhow integration
+- `From<anyhow::Error>` implementation for automatic error conversion
+- Enhanced README with TL;DR, Table of Contents, and improved structure
+- Real-world Axum handler examples in documentation
+- Framework Integration section with detailed Axum usage
+
+### Changed
+- Improved documentation structure with better navigation
+- Updated installation examples to show feature combinations
+
 ## [0.1.0] - 2025-12-23
 
 ### Added

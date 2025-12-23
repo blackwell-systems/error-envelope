@@ -11,6 +11,39 @@ A tiny Rust crate for consistent HTTP error responses across services.
 
 This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-systems/err-envelope), providing feature parity with the Go implementation.
 
+## TL;DR
+
+✅ **Consistent errors** - One JSON shape for all HTTP errors  
+✅ **Type-safe codes** - 18 standard error codes as an enum  
+✅ **Axum ready** - Automatic `IntoResponse` integration  
+✅ **anyhow compatible** - Seamless conversion via `From<anyhow::Error>`  
+✅ **Trace & retry** - Built-in trace IDs and retry signals  
+✅ **Framework-agnostic** - Core library has no dependencies  
+
+```rust
+// Real-world Axum handler
+#[get("/user/:id")]
+async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
+    let user = db::find_user(&id).await?; // anyhow error converts automatically
+    Ok(Json(user))
+}
+```
+
+## Table of Contents
+
+- [Why](#why)
+- [What You Get](#what-you-get)
+- [Installation](#installation)
+- [Crate Features](#crate-features)
+- [Quick Start](#quick-start)
+- [Anyhow Integration](#anyhow-integration)
+- [Framework Integration](#framework-integration)
+- [API Reference](#api-reference)
+- [Error Codes](#error-codes)
+- [Examples](#examples)
+- [Testing](#testing)
+- [Design Principles](#design-principles)
+
 ## Why
 
 Without a standard, every endpoint returns errors differently:
@@ -55,28 +88,30 @@ The `retry_after` field (human-readable duration) appears when `with_retry_after
 
 ```toml
 [dependencies]
-error-envelope = "0.1"
+error-envelope = "0.2"
 ```
 
 For Axum integration:
 ```toml
 [dependencies]
-error-envelope = { version = "0.1", features = ["axum-support"] }
+error-envelope = { version = "0.2", features = ["axum-support"] }
 ```
 
 For anyhow integration:
 ```toml
 [dependencies]
-error-envelope = { version = "0.1", features = ["anyhow-support"] }
+error-envelope = { version = "0.2", features = ["anyhow-support"] }
 ```
 
 📖 **Full API documentation**: [docs.rs/error-envelope](https://docs.rs/error-envelope)
 
 ## Crate Features
 
-- **`default`**: Core error envelope with no framework dependencies
-- **`axum-support`**: Adds `IntoResponse` implementation for Axum framework integration
-- **`anyhow-support`**: Adds `From<anyhow::Error>` conversion for seamless interop with anyhow
+| Feature | Description |
+|---------|-------------|
+| `default` | Core error envelope with no framework dependencies |
+| `axum-support` | Adds `IntoResponse` implementation for Axum framework integration |
+| `anyhow-support` | Enables `From<anyhow::Error>` conversion for seamless interop with anyhow |
 
 ## Quick Start
 
@@ -92,7 +127,59 @@ fn main() {
 }
 ```
 
-## API
+## Anyhow Integration
+
+With the `anyhow-support` feature, `anyhow::Error` automatically converts to `error_envelope::Error`:
+
+```rust
+use error_envelope::Error;
+
+async fn handler() -> Result<String, Error> {
+    // anyhow::Error converts automatically via ?
+    let result = do_work().await?;
+    Ok(result)
+}
+
+fn do_work() -> anyhow::Result<String> {
+    anyhow::bail!("something went wrong");
+}
+```
+
+This makes error-envelope a drop-in replacement for anyhow at HTTP boundaries:
+
+```rust
+use axum::{Json, Router, routing::get};
+use error_envelope::Error;
+
+async fn api_handler() -> Result<Json<Response>, Error> {
+    let data = fetch_data().await?; // anyhow error converts automatically
+    Ok(Json(Response { data }))
+}
+```
+
+## Framework Integration
+
+### Axum
+
+With the `axum-support` feature, `Error` implements `IntoResponse`:
+
+```rust
+use axum::{Json, routing::get, Router};
+use error_envelope::Error;
+
+async fn handler() -> Result<Json<User>, Error> {
+    let user = db::find_user("123").await?;
+    Ok(Json(user))
+}
+
+// Error automatically converts to HTTP response with:
+// - Correct status code
+// - JSON body with error envelope
+// - X-Request-ID header (if trace_id set)
+// - Retry-After header (if retry_after set)
+```
+
+## API Reference
 
 ### Common Constructors
 
@@ -168,36 +255,6 @@ let err = err.with_retryable(true);
 
 // Set retry-after duration
 let err = err.with_retry_after(Duration::from_secs(60));
-```
-
-### Anyhow Integration
-
-With the `anyhow-support` feature, `anyhow::Error` automatically converts to `error_envelope::Error`:
-
-```rust
-use error_envelope::Error;
-
-async fn handler() -> Result<String, Error> {
-    // anyhow::Error converts automatically via ?
-    let result = do_work().await?;
-    Ok(result)
-}
-
-fn do_work() -> anyhow::Result<String> {
-    anyhow::bail!("something went wrong");
-}
-```
-
-This makes error-envelope a drop-in replacement for anyhow at HTTP boundaries:
-
-```rust
-use axum::{Json, Router, routing::get};
-use error_envelope::Error;
-
-async fn api_handler() -> Result<Json<Response>, Error> {
-    let data = fetch_data().await?; // anyhow error converts automatically
-    Ok(Json(Response { data }))
-}
 ```
 
 ### Builder Pattern
