@@ -15,7 +15,7 @@ pub struct Error {
     // Not serialized directly
     pub status: u16,
     pub retry_after: Option<Duration>,
-    
+
     // Cause is not clonable, so we store it as a string
     cause_message: Option<String>,
 }
@@ -133,15 +133,15 @@ impl Serialize for Error {
 
         state.serialize_field("code", &self.code)?;
         state.serialize_field("message", &self.message)?;
-        
+
         if self.details.is_some() {
             state.serialize_field("details", &self.details)?;
         }
-        
+
         if self.trace_id.is_some() {
             state.serialize_field("trace_id", &self.trace_id)?;
         }
-        
+
         state.serialize_field("retryable", &self.retryable)?;
 
         if let Some(ref duration) = self.retry_after {

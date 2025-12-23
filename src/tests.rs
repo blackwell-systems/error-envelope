@@ -42,8 +42,7 @@ mod tests {
 
     #[test]
     fn test_json_serialization() {
-        let err = Error::not_found("user not found")
-            .with_trace_id("abc-123");
+        let err = Error::not_found("user not found").with_trace_id("abc-123");
 
         let json = serde_json::to_string(&err).unwrap();
         assert!(json.contains("\"code\":\"NOT_FOUND\""));
@@ -54,14 +53,13 @@ mod tests {
 
     #[test]
     fn test_retry_after_serialization() {
-        let err = Error::rate_limited("too many requests")
-            .with_retry_after(Duration::from_secs(30));
+        let err =
+            Error::rate_limited("too many requests").with_retry_after(Duration::from_secs(30));
 
         let json = serde_json::to_string(&err).unwrap();
         assert!(json.contains("\"retry_after\":\"30s\""));
 
-        let err = Error::unavailable("maintenance")
-            .with_retry_after(Duration::from_secs(300));
+        let err = Error::unavailable("maintenance").with_retry_after(Duration::from_secs(300));
 
         let json = serde_json::to_string(&err).unwrap();
         assert!(json.contains("\"retry_after\":\"5m0s\""));
@@ -99,7 +97,7 @@ mod tests {
     #[test]
     fn test_error_trait() {
         let err = Error::internal("test error");
-        let _: &dyn std::error::Error = &err;  // Should compile
+        let _: &dyn std::error::Error = &err; // Should compile
     }
 
     #[test]
@@ -119,7 +117,8 @@ mod tests {
     #[test]
     fn test_immutability() {
         let original = Error::not_found("not found");
-        let modified = original.clone()
+        let modified = original
+            .clone()
             .with_details(serde_json::json!({"id": "123"}))
             .with_trace_id("trace-456")
             .with_retryable(true);

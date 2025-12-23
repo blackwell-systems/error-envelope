@@ -3,7 +3,7 @@ use crate::{Code, Error};
 /// Helper constructors for common error types.
 impl Error {
     // Generic errors
-    
+
     /// Creates an internal server error (500).
     pub fn internal(message: impl Into<String>) -> Self {
         Self::new(Code::Internal, 500, message).with_retryable(false)
@@ -140,4 +140,44 @@ pub fn timeoutf(message: impl Into<String>) -> Error {
 /// Creates an unavailable error with formatted message.
 pub fn unavailablef(message: impl Into<String>) -> Error {
     Error::unavailable(message)
+}
+
+// Additional helpers
+
+use serde_json::json;
+use std::collections::HashMap;
+
+/// Field-level validation errors.
+pub type FieldErrors = HashMap<String, String>;
+
+/// Creates a validation error with field-level details.
+pub fn validation(fields: FieldErrors) -> Error {
+    Error::new(Code::ValidationFailed, 400, "")
+        .with_details(json!({"fields": fields}))
+        .with_retryable(false)
+}
+
+/// Maps arbitrary errors into an Error.
+///
+/// Handles common error types and wraps unknown errors as Internal.
+pub fn from(err: impl std::error::Error + 'static) -> Error {
+    let err_str = err.to_string().to_lowercase();
+
+    // Check for timeout errors
+    if err_str.contains("timeout") || err_str.contains("timed out") {
+        return Error::timeout("");
+    }
+
+    // Check for canceled errors
+    if err_str.contains("cancel") {
+        return Error::new(Code::Canceled, 499, "").with_retryable(false);
+    }
+
+    // Default to wrapping as internal error
+    Error::wrap(Code::Internal, 500, "", err).with_retryable(false)
+}
+
+/// Checks if an error has the given code.
+pub fn is(err: &Error, code: Code) -> bool {
+    err.code == code
 }
