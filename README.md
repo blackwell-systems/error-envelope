@@ -11,14 +11,19 @@ A tiny Rust crate for consistent HTTP error responses across services.
 
 This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-systems/err-envelope), providing feature parity with the Go implementation.
 
-## TL;DR
+## Overview
 
-**Consistent errors** - One JSON shape for all HTTP errors  
-**Type-safe codes** - 18 standard error codes as an enum  
-**Axum ready** - Automatic `IntoResponse` integration  
-**anyhow compatible** - Seamless conversion via `From<anyhow::Error>`  
-**Trace & retry** - Built-in trace IDs and retry signals  
-**Framework-agnostic** - Core library has no dependencies  
+**Consistent error format**: One predictable JSON structure for all HTTP errors
+
+**Typed error codes**: 18 standard codes as a type-safe enum
+
+**Axum integration**: Implements IntoResponse for seamless API error handling
+
+**anyhow support**: Optional feature for From<anyhow::Error> conversion
+
+**Traceability**: Built-in support for trace IDs and retry hints
+
+**Minimal dependencies**: Framework-agnostic core with opt-in integrations  
 
 ```rust
 // Real-world Axum handler
@@ -91,17 +96,13 @@ The `retry_after` field (human-readable duration) appears when `with_retry_after
 error-envelope = "0.2"
 ```
 
-For Axum integration:
+With optional features:
 ```toml
 [dependencies]
-error-envelope = { version = "0.2", features = ["axum-support"] }
+error-envelope = { version = "0.2", features = ["axum-support", "anyhow-support"] }
 ```
 
-For anyhow integration:
-```toml
-[dependencies]
-error-envelope = { version = "0.2", features = ["anyhow-support"] }
-```
+You can enable either or both features depending on your use case.
 
 📖 **Full API documentation**: [docs.rs/error-envelope](https://docs.rs/error-envelope)
 
@@ -293,35 +294,16 @@ The builder pattern is **immutable by default** in Rust (unlike the Go version w
 | `DownstreamError` | 502 | Yes | Upstream service failed |
 | `DownstreamTimeout` | 504 | Yes | Upstream service timeout |
 
-## Framework Integration
-
-### Axum (Optional Feature)
-
-Enable the `axum-support` feature and implement `IntoResponse`:
-
-```toml
-[dependencies]
-error-envelope = { version = "0.1", features = ["axum-support"] }
-```
-
-```rust
-use axum::response::IntoResponse;
-use error_envelope::Error;
-
-async fn handler() -> Result<String, Error> {
-    Err(Error::not_found("User not found"))
-}
-```
 
 ## Design Principles
 
-**Minimal**: ~500 lines, minimal dependencies, single responsibility.
+**Minimal**: ~500 lines of code, no unnecessary dependencies.
 
-**Framework-Agnostic**: Works standalone, optional integrations available.
+**Framework-agnostic**: Works standalone; integrations are opt-in via features.
 
-**Predictable**: Error codes are stable (never change). Messages may evolve for clarity.
+**Predictable**: Error codes are stable and semantically meaningful.
 
-**Observable**: Trace IDs for request correlation. Structured details for logging.
+**Observable**: Built-in trace IDs and structured details for debugging and logging.
 
 ## Examples
 
@@ -348,14 +330,6 @@ curl http://localhost:3000/validation
 ```bash
 cargo test --all-features
 ```
-
-All 17 tests pass (15 unit tests + 2 doc tests):
-- Constructors and builders
-- JSON serialization  
-- Error trait implementation
-- Retry-after formatting
-- Immutability guarantees
-- Axum integration
 
 ## License
 
