@@ -64,6 +64,13 @@ For Axum integration:
 error-envelope = { version = "0.1", features = ["axum-support"] }
 ```
 
+📖 **Full API documentation**: [docs.rs/error-envelope](https://docs.rs/error-envelope)
+
+## Crate Features
+
+- **`default`**: Core error envelope with no framework dependencies
+- **`axum-support`**: Adds `IntoResponse` implementation for Axum framework integration
+
 ## Quick Start
 
 ```rust
@@ -221,6 +228,26 @@ async fn handler() -> Result<String, Error> {
 **Predictable**: Error codes are stable (never change). Messages may evolve for clarity.
 
 **Observable**: Trace IDs for request correlation. Structured details for logging.
+
+## Examples
+
+See [`examples/axum_server.rs`](examples/axum_server.rs) for a complete Axum server demonstrating:
+- Validation errors with field details
+- Rate limiting with retry-after
+- Downstream error handling
+- Trace ID propagation
+
+Run it:
+```bash
+cargo run --example axum_server --features axum-support
+```
+
+Test endpoints:
+```bash
+curl http://localhost:3000/user?id=123
+curl http://localhost:3000/rate-limit
+curl http://localhost:3000/validation
+```
 
 ## Testing
 

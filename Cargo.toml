@@ -2,14 +2,14 @@
 name = "error-envelope"
 version = "0.1.0"
 edition = "2021"
-authors = ["Blackwell Systems <noreply@blackwell.systems>"]
+authors = ["Dayna Blackwell <blackwellsystems@protonmail.com>"]
 license = "MIT"
-description = "A tiny, framework-agnostic error envelope for HTTP APIs with Rust implementation of err-envelope"
+description = "Structured, consistent error responses for Rust APIs. Framework-agnostic with Axum support."
 documentation = "https://docs.rs/error-envelope"
 repository = "https://github.com/blackwell-systems/error-envelope"
 homepage = "https://github.com/blackwell-systems/error-envelope"
 readme = "README.md"
-keywords = ["error", "http", "api", "envelope", "rest"]
+keywords = ["error-handling", "http", "api", "axum", "web"]
 categories = ["web-programming", "api-bindings"]
 rust-version = "1.70"
 
