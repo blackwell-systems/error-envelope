@@ -1,0 +1,27 @@
+[package]
+name = "error-envelope"
+version = "0.1.0"
+edition = "2021"
+authors = ["Blackwell Systems"]
+license = "MIT"
+description = "A tiny, framework-agnostic error envelope for HTTP APIs"
+repository = "https://github.com/blackwell-systems/error-envelope-rust"
+keywords = ["error", "http", "api", "envelope", "rest"]
+categories = ["web-programming", "api-bindings"]
+
+[dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+thiserror = "1.0"
+http = "1.0"
+
+# Optional framework integrations
+axum = { version = "0.7", optional = true }
+
+[dev-dependencies]
+tokio = { version = "1", features = ["full"] }
+axum = "0.7"
+
+[features]
+default = []
+axum-support = ["axum"]
