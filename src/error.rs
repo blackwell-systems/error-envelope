@@ -101,6 +101,11 @@ impl Error {
     pub fn cause(&self) -> Option<&str> {
         self.cause_message.as_deref()
     }
+
+    /// Returns the HTTP status code.
+    pub fn status(&self) -> u16 {
+        self.status
+    }
 }
 
 impl fmt::Display for Error {
