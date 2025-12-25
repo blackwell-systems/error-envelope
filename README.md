@@ -22,32 +22,45 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 
 ```rust
 use axum::{extract::Path, Json};
-use error_envelope::Error;
-use std::time::Duration;
+use error_envelope::{Error, validation};
+use std::collections::HashMap;
 
+// Automatic conversion from anyhow:
 async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
     let user = db::find_user(&id).await?; // anyhow error converts automatically
     Ok(Json(user))
 }
 
-// Explicit construction for custom errors:
-async fn rate_limited_endpoint() -> Result<Json<Data>, Error> {
-    Err(Error::rate_limited("too many requests")
-        .with_trace_id("abc-123")
-        .with_retry_after(Duration::from_secs(30)))
+// Structured validation errors:
+async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> {
+    let mut errors = HashMap::new();
+    
+    if !data.email.contains('@') {
+        errors.insert("email", "must be valid email");
+    }
+    if data.age < 18 {
+        errors.insert("age", "must be 18 or older");
+    }
+    
+    if !errors.is_empty() {
+        return Err(validation(errors).with_trace_id("abc-123"));
+    }
+    
+    // ... create user
 }
 
-// On error, returns HTTP 429 with headers:
-// X-Request-ID: abc-123
-// Retry-After: 30
-//
-// Response body:
+// On validation error, returns HTTP 400:
 // {
-//   "code": "RATE_LIMITED",
-//   "message": "too many requests",
+//   "code": "VALIDATION_FAILED",
+//   "message": "Invalid input",
+//   "details": {
+//     "fields": {
+//       "email": "must be valid email",
+//       "age": "must be 18 or older"
+//     }
+//   },
 //   "trace_id": "abc-123",
-//   "retryable": true,
-//   "retry_after": "30s"
+//   "retryable": false
 // }
 ```
 
