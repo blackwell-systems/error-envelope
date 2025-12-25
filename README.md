@@ -32,18 +32,10 @@ async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
 
 ## Table of Contents
 
-- [Why](#why)
-- [What You Get](#what-you-get)
 - [Installation](#installation)
-- [Crate Features](#crate-features)
 - [Quick Start](#quick-start)
-- [Anyhow Integration](#anyhow-integration)
-- [Framework Integration](#framework-integration)
-- [API Reference](#api-reference)
-- [Error Codes](#error-codes)
-- [Examples](#examples)
-- [Testing](#testing)
-- [Design Principles](#design-principles)
+- [API Reference](#api-reference) - Common constructors and patterns
+- [Error Codes](#error-codes) - Standard error codes reference
 
 ## Why
 
@@ -178,86 +170,28 @@ async fn handler() -> Result<Json<User>, Error> {
 
 ## API Reference
 
-### Common Constructors
+Common constructors for typical scenarios:
 
 ```rust
 use error_envelope::Error;
 
-// Generic errors
-Error::internal("Database connection failed");   // 500
-Error::bad_request("Invalid JSON in body");       // 400
+// Most common
+Error::internal("Database connection failed");      // 500
+Error::not_found("User not found");                 // 404
+Error::unauthorized("Missing token");               // 401
+Error::forbidden("Insufficient permissions");       // 403
 
-// Auth errors
-Error::unauthorized("Missing token");             // 401
-Error::forbidden("Insufficient permissions");     // 403
+// Validation
+Error::bad_request("Invalid JSON");                 // 400
+use error_envelope::validation;
+let err = validation(field_errors);                 // 400 with field details
 
-// Resource errors
-Error::not_found("User not found");                // 404
-Error::method_not_allowed("POST not allowed");      // 405
-Error::request_timeout("Client timeout");          // 408
-Error::conflict("Email already exists");           // 409
-Error::gone("Resource permanently deleted");      // 410
-Error::payload_too_large("Upload exceeds 10MB");    // 413
-Error::unprocessable_entity("Invalid data format"); // 422
-
-// Infrastructure errors
-Error::rate_limited("Too many requests");          // 429
-Error::unavailable("Service temporarily down");   // 503
-Error::timeout("Database query timed out");       // 504
-
-// Downstream errors
-Error::downstream("payments", err);               // 502
-Error::downstream_timeout("payments", err);        // 504
+// Infrastructure
+Error::rate_limited("Too many requests");           // 429
+Error::timeout("Query timeout");                    // 504
 ```
 
-### Formatted Constructors
-
-Use the `format!` macro for dynamic error messages:
-
-```rust
-use error_envelope::{not_foundf, internalf};
-
-// Using format! macro
-let user_id = 123;
-let err = not_foundf(format!("user {} not found", user_id));
-
-let db_name = "postgres";
-let err = internalf(format!("database {} connection failed", db_name));
-```
-
-### Custom Errors
-
-```rust
-use error_envelope::{Error, Code};
-use std::time::Duration;
-
-// Low-level constructor
-let err = Error::new(
-    Code::Internal,
-    500,
-    "Database connection failed"
-);
-
-// Add details
-let err = err.with_details(serde_json::json!({
-    "database": "postgres",
-    "host": "db.example.com"
-}));
-
-// Add trace ID
-let err = err.with_trace_id("abc123");
-
-// Override retryable
-let err = err.with_retryable(true);
-
-// Set retry-after duration
-let err = err.with_retry_after(Duration::from_secs(60));
-```
-
-### Builder Pattern
-
-All `with_*` methods consume and return `Self`, enabling fluent chaining:
-
+**Builder pattern:**
 ```rust
 let err = Error::rate_limited("too many requests")
     .with_details(serde_json::json!({"limit": 100}))
@@ -265,30 +199,21 @@ let err = Error::rate_limited("too many requests")
     .with_retry_after(Duration::from_secs(30));
 ```
 
-The builder pattern is **immutable by default** in Rust (unlike the Go version which had to implement copy-on-modify).
+📖 **Full API documentation:** [API.md](API.md) - Complete constructor reference, formatted helpers, advanced patterns
 
 ## Error Codes
 
-| Code | HTTP Status | Retryable | Use Case |
-|------|-------------|-----------|----------|
-| `Internal` | 500 | No | Unexpected server errors |
-| `BadRequest` | 400 | No | Malformed requests |
-| `ValidationFailed` | 400 | No | Invalid input data |
-| `Unauthorized` | 401 | No | Missing/invalid auth |
-| `Forbidden` | 403 | No | Insufficient permissions |
-| `NotFound` | 404 | No | Resource doesn't exist |
-| `MethodNotAllowed` | 405 | No | Invalid HTTP method |
-| `RequestTimeout` | 408 | Yes | Client timeout |
-| `Conflict` | 409 | No | State conflict (duplicate) |
-| `Gone` | 410 | No | Resource permanently deleted |
-| `PayloadTooLarge` | 413 | No | Request body too large |
-| `UnprocessableEntity` | 422 | No | Semantic validation failed |
-| `RateLimited` | 429 | Yes | Too many requests |
-| `Canceled` | 499 | No | Client canceled request |
-| `Unavailable` | 503 | Yes | Service temporarily down |
-| `Timeout` | 504 | Yes | Gateway timeout |
-| `DownstreamError` | 502 | Yes | Upstream service failed |
-| `DownstreamTimeout` | 504 | Yes | Upstream service timeout |
+18 standard codes as a type-safe enum. Most common:
+
+| Code | HTTP Status | Use Case |
+|------|-------------|----------|
+| `Internal` | 500 | Unexpected server errors |
+| `NotFound` | 404 | Resource doesn't exist |
+| `Unauthorized` | 401 | Missing/invalid auth |
+| `ValidationFailed` | 400 | Invalid input data |
+| `Timeout` | 504 | Gateway timeout (retryable) |
+
+📖 **Complete reference:** [ERROR_CODES.md](ERROR_CODES.md) - All 18 codes with detailed descriptions, use cases, and retryable behavior
 
 
 ## Design Principles
