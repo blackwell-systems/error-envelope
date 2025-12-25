@@ -53,13 +53,15 @@ flowchart TB
 Use error-envelope when you need **consistent, structured HTTP error responses** across your API.
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph problems["Without error-envelope"]
         p1["Inconsistent formats<br/>across endpoints"]
         p2["No trace IDs<br/>for debugging"]
         p3["No retry signals<br/>for clients"]
         p4["Manual JSON<br/>serialization"]
     end
+
+    arrow["error-envelope"]
 
     subgraph solution["With error-envelope"]
         s1["One JSON structure<br/>everywhere"]
@@ -68,10 +70,12 @@ flowchart LR
         s4["Zero boilerplate<br/>via traits"]
     end
 
-    problems -->|"error-envelope"| solution
+    problems --> arrow
+    arrow --> solution
 
     style problems fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
     style solution fill:#3A4C43,stroke:#6b7280,color:#f0f0f0
+    style arrow fill:#CC8F00,stroke:#6b7280,color:#f0f0f0
 ```
 
 ### Use Cases
