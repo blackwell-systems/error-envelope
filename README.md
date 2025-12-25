@@ -23,13 +23,25 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 ```rust
 use axum::{extract::Path, Json};
 use error_envelope::Error;
+use std::time::Duration;
 
 async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
     let user = db::find_user(&id).await?; // anyhow error converts automatically
     Ok(Json(user))
 }
 
-// On error, returns structured HTTP response:
+// Explicit construction for custom errors:
+async fn rate_limited_endpoint() -> Result<Json<Data>, Error> {
+    Err(Error::rate_limited("too many requests")
+        .with_trace_id("abc-123")
+        .with_retry_after(Duration::from_secs(30)))
+}
+
+// On error, returns HTTP 429 with headers:
+// X-Request-ID: abc-123
+// Retry-After: 30
+//
+// Response body:
 // {
 //   "code": "RATE_LIMITED",
 //   "message": "too many requests",
