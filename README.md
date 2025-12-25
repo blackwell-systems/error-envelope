@@ -18,7 +18,9 @@ This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-system
 - **Consistent error format**: One predictable JSON structure for all HTTP errors
 - **Typed error codes**: 18 standard codes as a type-safe enum
 - **Traceability**: Built-in support for trace IDs and retry hints
-- **Framework-agnostic core**: Works standalone; integrations are opt-in via features  
+- **Framework-agnostic core**: Works standalone; integrations are opt-in via features
+
+**The stack:** anyhow for error propagation → error-envelope for HTTP boundary → Axum for responses
 
 ```rust
 use axum::{extract::Path, Json};
