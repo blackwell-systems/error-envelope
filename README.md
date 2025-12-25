@@ -18,7 +18,7 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 - **Traceability**: Built-in support for trace IDs and retry hints
 - **Framework-agnostic core**: Works standalone; integrations are opt-in via features
 
-**The stack:** anyhow for error propagation → error-envelope for HTTP boundary → Axum for responses
+**The stack:** anyhow for propagation → error-envelope at the HTTP boundary → framework integration via feature flags (Axum, Actix, Rocket)
 
 ```rust
 use axum::{extract::Path, Json};
@@ -36,7 +36,7 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
     let mut errors = HashMap::new();
     
     if !data.email.contains('@') {
-        errors.insert("email", "must be valid email");
+        errors.insert("email", "must be a valid email");
     }
     if data.age < 18 {
         errors.insert("age", "must be 18 or older");
@@ -46,7 +46,8 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
         return Err(validation(errors).with_trace_id("abc-123"));
     }
     
-    // ... create user
+    // ... create user and return Ok(Json(user))
+    todo!()
 }
 
 // On validation error, returns HTTP 400:
@@ -55,7 +56,7 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
 //   "message": "Invalid input",
 //   "details": {
 //     "fields": {
-//       "email": "must be valid email",
+//       "email": "must be a valid email",
 //       "age": "must be 18 or older"
 //     }
 //   },
@@ -74,9 +75,21 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
 ## Why error-envelope
 
 APIs need a formal contract for errors. Without one, clients can't predict error structure:
-- `{"error": "bad request"}` - string field
-- `{"message": "invalid", "code": 400}` - different field names
-- `{"errors": [{"field": "email"}]}` - array structure
+
+```json
+{"error": "bad request"}
+```
+String field, no structure.
+
+```json
+{"message": "invalid", "code": 400}
+```
+Different field names, ad-hoc.
+
+```json
+{"errors": [{"field": "email"}]}
+```
+Array structure, incompatible.
 
 Every endpoint becomes a special case. `error-envelope` establishes a predictable contract: same structure, same fields, every time.
 
@@ -110,44 +123,12 @@ You can enable either or both features depending on your use case.
 ```rust
 use error_envelope::Error;
 
-fn main() {
-    let err = Error::not_found("User not found")
-        .with_details(serde_json::json!({"user_id": "123"}))
-        .with_trace_id("abc-123");
-
-    println!("{}", serde_json::to_string_pretty(&err).unwrap());
-}
+// Create errors with builder pattern:
+let err = Error::not_found("User not found")
+    .with_trace_id("abc-123");
 ```
 
-## Anyhow Integration
-
-With the `anyhow-support` feature, `anyhow::Error` automatically converts to `error_envelope::Error`:
-
-```rust
-use error_envelope::Error;
-
-async fn handler() -> Result<String, Error> {
-    // anyhow::Error converts automatically via ?
-    let result = do_work().await?;
-    Ok(result)
-}
-
-fn do_work() -> anyhow::Result<String> {
-    anyhow::bail!("something went wrong");
-}
-```
-
-This makes error-envelope a drop-in replacement for anyhow at HTTP boundaries:
-
-```rust
-use axum::{Json, Router, routing::get};
-use error_envelope::Error;
-
-async fn api_handler() -> Result<Json<Response>, Error> {
-    let data = fetch_data().await?; // anyhow error converts automatically
-    Ok(Json(Response { data }))
-}
-```
+That's it. See the hero example above for Axum integration and validation patterns.
 
 ## Framework Integration
 
