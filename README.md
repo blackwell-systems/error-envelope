@@ -218,13 +218,7 @@ let err = Error::rate_limited("too many requests")
 
 ## Design Principles
 
-**Minimal**: ~500 lines of code, no unnecessary dependencies.
-
-**Framework-agnostic**: Works standalone; integrations are opt-in via features.
-
-**Predictable**: Error codes are stable and semantically meaningful.
-
-**Observable**: Built-in trace IDs and structured details for debugging and logging.
+Minimal, framework-agnostic core (~500 lines); integrations behind feature flags. See [ARCHITECTURE.md](ARCHITECTURE.md) for design rationale.
 
 ## Examples
 
