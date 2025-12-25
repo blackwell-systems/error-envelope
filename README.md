@@ -13,12 +13,12 @@ This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-system
 
 ## Overview
 
+- **anyhow integration**: Automatic conversion from anyhow::Error to structured HTTP responses
+- **Axum support**: Implements IntoResponse for seamless API error handling
 - **Consistent error format**: One predictable JSON structure for all HTTP errors
 - **Typed error codes**: 18 standard codes as a type-safe enum
-- **Axum integration**: Implements IntoResponse for seamless API error handling
-- **anyhow support**: Optional feature for From<anyhow::Error> conversion
 - **Traceability**: Built-in support for trace IDs and retry hints
-- **Minimal dependencies**: Framework-agnostic core with opt-in integrations  
+- **Framework-agnostic core**: Works standalone; integrations are opt-in via features  
 
 ```rust
 use axum::{extract::Path, Json};
