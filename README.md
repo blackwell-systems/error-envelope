@@ -71,7 +71,7 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
 - [API Reference](#api-reference) - Common constructors and patterns
 - [Error Codes](#error-codes) - Standard error codes reference
 
-## Why
+## Why error-envelope
 
 APIs need a formal contract for errors. Without one, clients can't predict error structure:
 - `{"error": "bad request"}` - string field
