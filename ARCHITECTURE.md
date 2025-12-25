@@ -87,12 +87,6 @@ flowchart TB
 - APIs with validation requirements
 - Services that call downstream APIs
 
-**Skip if:**
-- Internal-only services (no external clients)
-- gRPC or binary protocols (not HTTP/JSON)
-- Single-endpoint services with simple errors
-- Existing error standard you must maintain
-
 ---
 
 ## Error Flow Through Your Application
@@ -708,18 +702,5 @@ flowchart LR
 3. **Observability** - Trace IDs for distributed debugging
 4. **Resilience** - Retry signals for transient failures
 5. **Zero boilerplate** - `IntoResponse` trait handles serialization
-
-**Use it when:**
-- Building REST APIs with external clients
-- Multiple endpoints need consistent errors
-- You want field-level validation feedback
-- Distributed tracing is important
-- Client retry logic matters
-
-**Skip it when:**
-- Internal-only services (no external clients)
-- Single-endpoint APIs with simple errors
-- Using non-HTTP protocols (gRPC, etc.)
-- Existing error standard you must maintain
 
 **The key insight:** error-envelope doesn't replace thiserror or anyhow--it complements them by handling the HTTP boundary. Your domain still uses thiserror for typed errors, your application layer still uses anyhow for flexibility, and error-envelope handles the final conversion to structured HTTP responses.
