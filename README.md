@@ -29,8 +29,13 @@ async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
     Ok(Json(user))
 }
 
-// On error, automatically returns HTTP 500 with:
-// {"code": "INTERNAL", "message": "database connection failed", "retryable": false}
+// On error, returns structured HTTP response:
+// {
+//   "code": "TIMEOUT",
+//   "message": "database query timeout",
+//   "trace_id": "abc-123",
+//   "retryable": true
+// }
 ```
 
 ## Table of Contents
