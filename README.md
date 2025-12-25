@@ -7,7 +7,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Sponsor](https://img.shields.io/badge/Sponsor-Buy%20Me%20a%20Coffee-yellow?logo=buy-me-a-coffee&logoColor=white)](https://buymeacoffee.com/blackwellsystems)
 
-A tiny Rust crate for consistent HTTP error responses across services.
+Consistent, traceable, retry-aware HTTP error responses for Rust APIs — framework-agnostic with optional Axum support.
 
 This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-systems/err-envelope), providing feature parity with the Go implementation.
 
