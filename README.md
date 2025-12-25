@@ -28,6 +28,9 @@ async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
     let user = db::find_user(&id).await?; // anyhow error converts automatically
     Ok(Json(user))
 }
+
+// On error, automatically returns HTTP 500 with:
+// {"code": "INTERNAL", "message": "database connection failed", "retryable": false}
 ```
 
 ## Table of Contents
