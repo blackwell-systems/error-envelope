@@ -73,12 +73,12 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
 
 ## Why
 
-Without a standard, every endpoint returns errors differently:
-- `{"error": "bad request"}`
-- `{"message": "invalid email"}`  
-- `{"code": "E123", "details": {...}}`
+APIs need a formal contract for errors. Without one, clients can't predict error structure:
+- `{"error": "bad request"}` - string field
+- `{"message": "invalid", "code": 400}` - different field names
+- `{"errors": [{"field": "email"}]}` - array structure
 
-This forces clients to handle each endpoint specially. `error-envelope` provides a single, predictable error shape.
+Every endpoint becomes a special case. `error-envelope` establishes a predictable contract: same structure, same fields, every time.
 
 ## Installation
 
