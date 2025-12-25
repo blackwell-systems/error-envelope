@@ -9,8 +9,6 @@
 
 Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features anyhow and Axum integration with a framework-agnostic core.
 
-This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-systems/err-envelope), providing feature parity with the Go implementation.
-
 ## Overview
 
 - **anyhow integration**: Automatic conversion from anyhow::Error to structured HTTP responses
