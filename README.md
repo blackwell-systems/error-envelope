@@ -31,10 +31,11 @@ async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
 
 // On error, returns structured HTTP response:
 // {
-//   "code": "TIMEOUT",
-//   "message": "database query timeout",
+//   "code": "RATE_LIMITED",
+//   "message": "too many requests",
 //   "trace_id": "abc-123",
-//   "retryable": true
+//   "retryable": true,
+//   "retry_after": "30s"
 // }
 ```
 
