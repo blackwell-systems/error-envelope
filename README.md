@@ -80,37 +80,6 @@ Without a standard, every endpoint returns errors differently:
 
 This forces clients to handle each endpoint specially. `error-envelope` provides a single, predictable error shape.
 
-## What You Get
-
-```json
-{
-  "code": "VALIDATION_FAILED",
-  "message": "Invalid input",
-  "details": {
-    "fields": {
-      "email": "must be a valid email"
-    }
-  },
-  "trace_id": "a1b2c3d4e5f6",
-  "retryable": false
-}
-```
-
-Every field has a purpose: stable codes for logic, messages for humans, details for context, trace IDs for debugging, and retry signals for resilience.
-
-**Rate limiting example:**
-```json
-{
-  "code": "RATE_LIMITED",
-  "message": "Too many requests",
-  "trace_id": "a1b2c3d4e5f6",
-  "retryable": true,
-  "retry_after": "30s"
-}
-```
-
-The `retry_after` field (human-readable duration) appears when `with_retry_after()` is used.
-
 ## Installation
 
 ```toml
