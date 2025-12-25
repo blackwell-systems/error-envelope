@@ -670,13 +670,15 @@ async fn handler() -> Result<Json<User>, Error> {
 - One line of code (`?` operator)
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph manual["Manual (Before)"]
         m1["StatusCode::500"]
         m2["Lost context"]
         m3["No trace IDs"]
         m4["Client guesses"]
     end
+
+    arrow["10 lines of boilerplate<br/>per endpoint"]
 
     subgraph envelope["error-envelope (After)"]
         e1["Structured JSON"]
@@ -685,10 +687,12 @@ flowchart LR
         e4["Smart clients"]
     end
 
-    manual -.->|"10 lines of<br/>boilerplate per<br/>endpoint"| envelope
+    manual --> arrow
+    arrow --> envelope
 
     style manual fill:#4C3A3C,stroke:#6b7280,color:#f0f0f0
     style envelope fill:#2A9F66,stroke:#6b7280,color:#f0f0f0
+    style arrow fill:#CC8F00,stroke:#6b7280,color:#f0f0f0
 ```
 
 ---
@@ -703,4 +707,4 @@ flowchart LR
 4. **Resilience** - Retry signals for transient failures
 5. **Zero boilerplate** - `IntoResponse` trait handles serialization
 
-**The key insight:** error-envelope doesn't replace thiserror or anyhow--it complements them by handling the HTTP boundary. Your domain still uses thiserror for typed errors, your application layer still uses anyhow for flexibility, and error-envelope handles the final conversion to structured HTTP responses.
+error-envelope doesn't replace thiserror or anyhow--it complements them by handling the HTTP boundary. Your domain still uses thiserror for typed errors, your application layer still uses anyhow for flexibility, and error-envelope handles the final conversion to structured HTTP responses.
