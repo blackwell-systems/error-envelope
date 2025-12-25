@@ -13,21 +13,17 @@ This is a Rust port of [`err-envelope` (Go)](https://github.com/blackwell-system
 
 ## Overview
 
-**Consistent error format**: One predictable JSON structure for all HTTP errors
-
-**Typed error codes**: 18 standard codes as a type-safe enum
-
-**Axum integration**: Implements IntoResponse for seamless API error handling
-
-**anyhow support**: Optional feature for From<anyhow::Error> conversion
-
-**Traceability**: Built-in support for trace IDs and retry hints
-
-**Minimal dependencies**: Framework-agnostic core with opt-in integrations  
+- **Consistent error format**: One predictable JSON structure for all HTTP errors
+- **Typed error codes**: 18 standard codes as a type-safe enum
+- **Axum integration**: Implements IntoResponse for seamless API error handling
+- **anyhow support**: Optional feature for From<anyhow::Error> conversion
+- **Traceability**: Built-in support for trace IDs and retry hints
+- **Minimal dependencies**: Framework-agnostic core with opt-in integrations  
 
 ```rust
-// Real-world Axum handler
-#[get("/user/:id")]
+use axum::{extract::Path, Json};
+use error_envelope::Error;
+
 async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
     let user = db::find_user(&id).await?; // anyhow error converts automatically
     Ok(Json(user))

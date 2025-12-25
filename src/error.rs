@@ -6,17 +6,22 @@ use std::time::Duration;
 /// Structured error envelope for HTTP APIs.
 #[derive(Debug, Clone)]
 pub struct Error {
+    /// Machine-readable error code.
     pub code: Code,
+    /// Human-readable error message.
     pub message: String,
+    /// Optional structured details (e.g., field-level validation errors).
     pub details: Option<serde_json::Value>,
+    /// Optional trace ID for distributed tracing.
     pub trace_id: Option<String>,
+    /// Whether the client should retry this request.
     pub retryable: bool,
 
-    // Not serialized directly
+    /// HTTP status code.
     pub status: u16,
+    /// Optional retry-after duration for rate limiting.
     pub retry_after: Option<Duration>,
 
-    // Cause is not clonable, so we store it as a string
     cause_message: Option<String>,
 }
 

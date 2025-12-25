@@ -4,30 +4,44 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum Code {
-    // Generic errors
+    /// Internal server error (500).
     Internal,
+    /// Bad request error (400).
     BadRequest,
+    /// Resource not found (404).
     NotFound,
+    /// HTTP method not allowed (405).
     MethodNotAllowed,
+    /// Resource permanently deleted (410).
     Gone,
+    /// Resource conflict, often due to concurrent modification (409).
     Conflict,
+    /// Request payload exceeds size limit (413).
     PayloadTooLarge,
+    /// Request timed out before completion (408).
     RequestTimeout,
+    /// Too many requests, client should retry later (429).
     RateLimited,
+    /// Service temporarily unavailable (503).
     Unavailable,
 
-    // Validation / auth
+    /// Input validation failed (400).
     ValidationFailed,
+    /// Authentication required or credentials invalid (401).
     Unauthorized,
+    /// Authenticated but not permitted to access resource (403).
     Forbidden,
+    /// Request is well-formed but semantically invalid (422).
     UnprocessableEntity,
 
-    // Timeouts / cancellations
+    /// Gateway or processing timeout (504).
     Timeout,
+    /// Request was canceled by client (499).
     Canceled,
 
-    // Downstream
+    /// Downstream service returned an error (502).
     DownstreamError,
+    /// Downstream service timed out (504).
     DownstreamTimeout,
 }
 
