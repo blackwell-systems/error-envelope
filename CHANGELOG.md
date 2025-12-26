@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Domain error mapping documentation in API.md (thiserror pattern with From trait)
 - API.md: Complete API reference extracted from README (364 lines)
 - ERROR_CODES.md: Complete error codes reference with all 18 codes (167 lines)
-- ARCHITECTURE.md: Visual architecture guide with 6 mermaid diagrams (721 lines)
+- ARCHITECTURE.md: Visual architecture guide with 4 mermaid diagrams (272 lines)
 - Four new examples:
   - `domain_errors.rs` - thiserror → error-envelope mapping via From trait
   - `validation.rs` - Field-level validation with structured error details

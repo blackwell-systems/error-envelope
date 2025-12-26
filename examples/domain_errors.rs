@@ -21,8 +21,8 @@ pub enum DomainError {
     #[error("insufficient permissions")]
     Forbidden,
 
-    #[error("database error: {0}")]
-    Database(String),
+    #[error("database error")]
+    Database(#[from] anyhow::Error),
 }
 
 // Map domain errors to HTTP errors via From trait
@@ -35,9 +35,9 @@ impl From<DomainError> for Error {
 
             DomainError::Forbidden => Error::new(Code::Forbidden, 403, "Insufficient permissions"),
 
-            // Preserve cause message for debugging
-            DomainError::Database(cause) => {
-                Error::wrap(Code::Internal, 500, "Database operation failed", cause)
+            // Database errors become Internal
+            DomainError::Database(_cause) => {
+                Error::new(Code::Internal, 500, "Database operation failed")
             }
         }
     }

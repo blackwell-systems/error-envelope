@@ -1,6 +1,6 @@
 [package]
 name = "error-envelope"
-version = "0.2.2"
+version = "0.3.0"
 edition = "2021"
 authors = ["Dayna Blackwell <blackwellsystems@protonmail.com>"]
 license = "MIT"
@@ -27,6 +27,7 @@ anyhow = { version = "1.0", optional = true }
 tokio = { version = "1", features = ["full"] }
 axum = "0.7"
 anyhow = "1.0"
+uuid = { version = "1.0", features = ["v4"] }
 
 [features]
 default = []
