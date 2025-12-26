@@ -12,6 +12,7 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 ## Overview
 
 - **anyhow integration**: Automatic conversion from anyhow::Error into error_envelope::Error at the HTTP boundary
+- **thiserror mapping**: Implement From<DomainError> for explicit HTTP semantics (no accidental 500s)
 - **Axum support**: Implements IntoResponse for seamless API error handling
 - **Consistent error format**: One predictable JSON structure for all HTTP errors
 - **Typed error codes**: 18 standard codes as a type-safe enum
