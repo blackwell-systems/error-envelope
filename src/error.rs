@@ -112,6 +112,33 @@ impl Error {
         self
     }
 
+    /// Attaches a cause message from an underlying error.
+    ///
+    /// Useful when mapping domain errors (e.g., thiserror) to HTTP errors
+    /// while preserving the underlying error message for debugging.
+    ///
+    /// # Example
+    /// ```
+    /// use error_envelope::{Error, Code};
+    ///
+    /// #[derive(Debug)]
+    /// struct DatabaseError;
+    /// impl std::fmt::Display for DatabaseError {
+    ///     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+    ///         write!(f, "connection timeout")
+    ///     }
+    /// }
+    /// impl std::error::Error for DatabaseError {}
+    ///
+    /// let db_err = DatabaseError;
+    /// let err = Error::new(Code::Internal, 500, "Database failure")
+    ///     .with_cause_message(db_err);
+    /// ```
+    pub fn with_cause_message(mut self, cause: impl std::error::Error) -> Self {
+        self.cause_message = Some(cause.to_string());
+        self
+    }
+
     /// Returns the cause message if available.
     pub fn cause(&self) -> Option<&str> {
         self.cause_message.as_deref()

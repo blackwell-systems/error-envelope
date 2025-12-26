@@ -363,4 +363,77 @@ async fn handler(req: Request) -> Result<Json<Data>, Error> {
 
 ---
 
+## Domain Error Mapping (thiserror)
+
+When using `thiserror` for domain errors, implement `From<DomainError> for Error` to map domain semantics to HTTP responses.
+
+This gives you:
+- Explicit HTTP status codes and error codes
+- Zero boilerplate in handlers via `?`
+- No accidental 500s for domain failures
+
+### Pattern
+
+```rust
+use error_envelope::{Code, Error};
+use thiserror::Error as ThisError;
+
+#[derive(ThisError, Debug)]
+pub enum DomainError {
+    #[error("user not found")]
+    NotFound,
+
+    #[error("email already exists")]
+    EmailConflict,
+
+    #[error("database error")]
+    Database(#[from] anyhow::Error),
+}
+
+impl From<DomainError> for Error {
+    fn from(e: DomainError) -> Self {
+        match e {
+            DomainError::NotFound =>
+                Error::new(Code::NotFound, 404, "User not found"),
+
+            DomainError::EmailConflict =>
+                Error::new(Code::Conflict, 409, "Email already exists"),
+
+            // Preserve cause message for debugging
+            DomainError::Database(cause) =>
+                Error::wrap(Code::Internal, 500, "Database failure", cause),
+        }
+    }
+}
+```
+
+### Usage in Handlers
+
+```rust
+use axum::Json;
+use error_envelope::Error;
+
+#[derive(Debug)]
+struct User;
+
+async fn handler() -> Result<Json<User>, Error> {
+    // DomainError -> Error automatically via From
+    let user = get_user().await?;
+    Ok(Json(user))
+}
+
+async fn get_user() -> Result<User, DomainError> {
+    Err(DomainError::NotFound)
+}
+```
+
+### Notes
+
+- `Error::wrap(...)` stores the cause's string representation for debugging
+- This is **not** an error chain — `Error::source()` returns `None`
+- Use this pattern for **domain errors** where you know the HTTP semantics
+- Use anyhow integration for **unknown/unexpected errors** at boundaries
+
+---
+
 For complete error code reference, see [ERROR_CODES.md](ERROR_CODES.md).
