@@ -4,7 +4,6 @@
 /// hints that tell clients when to retry.
 ///
 /// Run with: cargo run --example rate_limiting --features axum-support
-
 use axum::{extract::Path, routing::get, Json, Router};
 use error_envelope::Error;
 use serde::Serialize;

@@ -4,7 +4,6 @@
 /// domain errors with error-envelope at the HTTP boundary.
 ///
 /// Run with: cargo run --example domain_errors --features axum-support
-
 use axum::{routing::get, Json, Router};
 use error_envelope::{Code, Error};
 use serde::Serialize;
@@ -32,13 +31,9 @@ impl From<DomainError> for Error {
         match e {
             DomainError::UserNotFound => Error::new(Code::NotFound, 404, "User not found"),
 
-            DomainError::EmailConflict => {
-                Error::new(Code::Conflict, 409, "Email already exists")
-            }
+            DomainError::EmailConflict => Error::new(Code::Conflict, 409, "Email already exists"),
 
-            DomainError::Forbidden => {
-                Error::new(Code::Forbidden, 403, "Insufficient permissions")
-            }
+            DomainError::Forbidden => Error::new(Code::Forbidden, 403, "Insufficient permissions"),
 
             // Preserve cause message for debugging
             DomainError::Database(cause) => {

@@ -4,7 +4,6 @@
 /// for correlation across services and log entries.
 ///
 /// Run with: cargo run --example tracing --features axum-support
-
 use axum::{
     extract::{Path, Request},
     middleware::{self, Next},
