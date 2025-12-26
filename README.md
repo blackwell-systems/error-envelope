@@ -18,7 +18,7 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 - **Traceability**: Built-in support for trace IDs and retry hints
 - **Framework-agnostic core**: Works standalone; integrations are opt-in via features
 
-**The stack:** anyhow for propagation → error-envelope at the HTTP boundary → framework integration via feature flags (Axum, Actix, Rocket)
+**The stack:** anyhow for propagation → error-envelope at the HTTP boundary → Axum integration (optional via feature flag)
 
 ```rust
 use axum::{extract::Path, Json};
