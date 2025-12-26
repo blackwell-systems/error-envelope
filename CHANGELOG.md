@@ -7,6 +7,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-12-26
+
+### Added
+- `Error::with_cause_message()` method for fluent builder-style cause attachment
+- Domain error mapping documentation in API.md (thiserror pattern with From trait)
+- API.md: Complete API reference extracted from README
+- ERROR_CODES.md: Complete error codes reference with all 18 codes
+- ARCHITECTURE.md: Visual architecture guide with 6 mermaid diagrams
+
+### Changed
+- README restructured as landing page (337→235 lines, 30% reduction)
+- Hero example now demonstrates validation errors with structured field details
+- Quick Start reduced to minimal rate limiting example (demonstrates retry_after)
+- "Why error-envelope" section reframed around formal error contracts
+- Overview section reordered to lead with anyhow and Axum integration
+- Design Principles section condensed with link to ARCHITECTURE.md
+- Stack architecture explicitly documented: anyhow → error-envelope → framework
+
 ## [0.2.2] - 2025-12-25
 
 ### Changed
