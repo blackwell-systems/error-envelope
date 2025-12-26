@@ -214,22 +214,20 @@ Minimal, framework-agnostic core (~500 lines); integrations behind feature flags
 
 ## Examples
 
-See [`examples/axum_server.rs`](examples/axum_server.rs) for a complete Axum server demonstrating:
-- Validation errors with field details
-- Rate limiting with retry-after
-- Downstream error handling
-- Trace ID propagation
+Complete working examples in the [`examples/`](examples/) directory:
 
-Run it:
-```bash
-cargo run --example axum_server --features axum-support
-```
+- **[`domain_errors.rs`](examples/domain_errors.rs)** - Map thiserror domain errors to HTTP errors (From pattern)
+- **[`validation.rs`](examples/validation.rs)** - Field-level validation with structured error details
+- **[`rate_limiting.rs`](examples/rate_limiting.rs)** - Rate limiting with retry-after hints
+- **[`tracing.rs`](examples/tracing.rs)** - Trace ID propagation through middleware
+- **[`axum_server.rs`](examples/axum_server.rs)** - Complete Axum server with all patterns
 
-Test endpoints:
+Run any example:
 ```bash
-curl http://localhost:3000/user?id=123
-curl http://localhost:3000/rate-limit
-curl http://localhost:3000/validation
+cargo run --example domain_errors --features axum-support
+cargo run --example validation --features axum-support
+cargo run --example rate_limiting --features axum-support
+cargo run --example tracing --features axum-support
 ```
 
 ## Testing
