@@ -19,7 +19,7 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 - **Traceability**: Built-in support for trace IDs and retry hints
 - **Framework-agnostic core**: Works standalone; integrations are opt-in via features
 
-**The stack:** anyhow for propagation → error-envelope at the HTTP boundary → Axum integration (optional via feature flag)
+**The stack:** anyhow for propagation → error-envelope at the HTTP boundary → Axum via axum-support
 
 ```rust
 use axum::{extract::Path, Json};
@@ -34,6 +34,7 @@ struct User { id: String, email: String }
 
 // Automatic conversion from anyhow:
 async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
+    // db::find_user is your app code (returns anyhow::Result<User>)
     let user = db::find_user(&id).await?; // anyhow error converts automatically
     Ok(Json(user))
 }
@@ -76,6 +77,7 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
 - [Why error-envelope](#why-error-envelope)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
+- [Examples](#examples)
 - [API Reference](API.md) - Complete API documentation
 - [Error Codes](ERROR_CODES.md) - All 18 error codes with descriptions
 
@@ -104,13 +106,13 @@ Every endpoint becomes a special case. `error-envelope` establishes a predictabl
 
 ```toml
 [dependencies]
-error-envelope = "0.2"
+error-envelope = "0.3"
 ```
 
 With optional features:
 ```toml
 [dependencies]
-error-envelope = { version = "0.2", features = ["axum-support", "anyhow-support"] }
+error-envelope = { version = "0.3", features = ["axum-support", "anyhow-support"] }
 ```
 
 You can enable either or both features depending on your use case.
