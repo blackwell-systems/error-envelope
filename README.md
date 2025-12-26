@@ -122,10 +122,12 @@ You can enable either or both features depending on your use case.
 
 ```rust
 use error_envelope::Error;
+use std::time::Duration;
 
 // Create errors with builder pattern:
-let err = Error::not_found("User not found")
-    .with_trace_id("abc-123");
+let err = Error::rate_limited("too many requests")
+    .with_trace_id("abc-123")
+    .with_retry_after(Duration::from_secs(30));
 ```
 
 That's it. See the hero example above for Axum integration and validation patterns.
