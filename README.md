@@ -11,7 +11,7 @@ Structured, traceable, retry-aware HTTP error responses for Rust APIs. Features 
 
 ## Overview
 
-- **anyhow integration**: Automatic conversion from anyhow::Error to structured HTTP responses
+- **anyhow integration**: Automatic conversion from anyhow::Error into error_envelope::Error at the HTTP boundary
 - **Axum support**: Implements IntoResponse for seamless API error handling
 - **Consistent error format**: One predictable JSON structure for all HTTP errors
 - **Typed error codes**: 18 standard codes as a type-safe enum
@@ -25,6 +25,12 @@ use axum::{extract::Path, Json};
 use error_envelope::{Error, validation};
 use std::collections::HashMap;
 
+#[derive(serde::Deserialize)]
+struct CreateUser { email: String, age: u8 }
+
+#[derive(serde::Serialize)]
+struct User { id: String, email: String }
+
 // Automatic conversion from anyhow:
 async fn get_user(Path(id): Path<String>) -> Result<Json<User>, Error> {
     let user = db::find_user(&id).await?; // anyhow error converts automatically
@@ -36,18 +42,17 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
     let mut errors = HashMap::new();
     
     if !data.email.contains('@') {
-        errors.insert("email", "must be a valid email");
+        errors.insert("email".to_string(), "must be a valid email".to_string());
     }
     if data.age < 18 {
-        errors.insert("age", "must be 18 or older");
+        errors.insert("age".to_string(), "must be 18 or older".to_string());
     }
     
     if !errors.is_empty() {
         return Err(validation(errors).with_trace_id("abc-123"));
     }
     
-    // ... create user and return Ok(Json(user))
-    todo!()
+    Ok(Json(User { id: "123".to_string(), email: data.email }))
 }
 
 // On validation error, returns HTTP 400:
@@ -67,10 +72,11 @@ async fn create_user(Json(data): Json<CreateUser>) -> Result<Json<User>, Error> 
 
 ## Table of Contents
 
+- [Why error-envelope](#why-error-envelope)
 - [Installation](#installation)
 - [Quick Start](#quick-start)
-- [API Reference](#api-reference) - Common constructors and patterns
-- [Error Codes](#error-codes) - Standard error codes reference
+- [API Reference](API.md) - Complete API documentation
+- [Error Codes](ERROR_CODES.md) - All 18 error codes with descriptions
 
 ## Why error-envelope
 
