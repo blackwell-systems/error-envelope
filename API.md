@@ -8,6 +8,10 @@ Complete API documentation for error-envelope.
 - [Formatted Constructors](#formatted-constructors)
 - [Custom Errors](#custom-errors)
 - [Builder Pattern](#builder-pattern)
+- [Helper Functions](#helper-functions)
+- [Framework Integration](#framework-integration)
+- [Advanced Usage](#advanced-usage)
+- [Domain Error Mapping (thiserror)](#domain-error-mapping-thiserror)
 
 ---
 
