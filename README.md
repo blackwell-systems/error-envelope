@@ -115,7 +115,7 @@ error-envelope = { version = "0.2", features = ["axum-support", "anyhow-support"
 
 You can enable either or both features depending on your use case.
 
-📖 **Full API documentation**: [docs.rs/error-envelope](https://docs.rs/error-envelope)
+📚 **Full API documentation**: [docs.rs/error-envelope](https://docs.rs/error-envelope)
 
 ## Crate Features
 
@@ -192,7 +192,7 @@ let err = Error::rate_limited("too many requests")
     .with_retry_after(Duration::from_secs(30));
 ```
 
-📖 **Full API documentation:** [API.md](API.md) - Complete constructor reference, formatted helpers, advanced patterns
+📚 **Full API documentation:** [API.md](API.md) - Complete constructor reference, formatted helpers, advanced patterns
 
 ## Error Codes
 
@@ -206,7 +206,7 @@ let err = Error::rate_limited("too many requests")
 | `ValidationFailed` | 400 | Invalid input data |
 | `Timeout` | 504 | Gateway timeout (retryable) |
 
-📖 **Complete reference:** [ERROR_CODES.md](ERROR_CODES.md) - All 18 codes with detailed descriptions, use cases, and retryable behavior
+📚 **Complete reference:** [ERROR_CODES.md](ERROR_CODES.md) - All 18 codes with detailed descriptions, use cases, and retryable behavior
 
 
 ## Design Principles
