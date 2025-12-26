@@ -12,18 +12,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `Error::with_cause_message()` method for fluent builder-style cause attachment
 - Domain error mapping documentation in API.md (thiserror pattern with From trait)
-- API.md: Complete API reference extracted from README
-- ERROR_CODES.md: Complete error codes reference with all 18 codes
-- ARCHITECTURE.md: Visual architecture guide with 6 mermaid diagrams
+- API.md: Complete API reference extracted from README (364 lines)
+- ERROR_CODES.md: Complete error codes reference with all 18 codes (167 lines)
+- ARCHITECTURE.md: Visual architecture guide with 6 mermaid diagrams (721 lines)
+- Four new examples:
+  - `domain_errors.rs` - thiserror → error-envelope mapping via From trait
+  - `validation.rs` - Field-level validation with structured error details
+  - `rate_limiting.rs` - Rate limiting with retry_after and time windows
+  - `tracing.rs` - Trace ID propagation through middleware
 
 ### Changed
 - README restructured as landing page (337→235 lines, 30% reduction)
-- Hero example now demonstrates validation errors with structured field details
+- Hero example now compile-clean with struct definitions and proper HashMap types
+- Hero example demonstrates validation errors with structured field details
 - Quick Start reduced to minimal rate limiting example (demonstrates retry_after)
+- Table of Contents now has clickable links to sections and external docs
 - "Why error-envelope" section reframed around formal error contracts
 - Overview section reordered to lead with anyhow and Axum integration
+- anyhow integration description clarified: "at the HTTP boundary"
 - Design Principles section condensed with link to ARCHITECTURE.md
-- Stack architecture explicitly documented: anyhow → error-envelope → framework
+- Stack architecture explicitly documented: anyhow → error-envelope → Axum
+- Examples section reorganized to list all five examples with descriptions
 
 ## [0.2.2] - 2025-12-25
 
